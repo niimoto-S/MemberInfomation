@@ -1,0 +1,21 @@
+@charset "UTF-8";
+
+.button1 {
+  display: inline-block;
+  border-style: solid;
+  color: black;
+  background-color: rgb(225, 224, 224);
+  border-width:1px;
+  border-color: darkgray;
+  text-decoration: none;
+}
+
+#button1 {
+  display: inline-block;
+  border-style: solid;
+  color: black;
+  background-color: rgb(225, 224, 224);
+  border-width:1px;
+  border-color: darkgray;
+  text-decoration: none;
+}
