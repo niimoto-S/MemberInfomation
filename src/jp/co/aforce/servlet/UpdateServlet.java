@@ -27,15 +27,13 @@ public class UpdateServlet extends HttpServlet {
      */
     public UpdateServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.sendRedirect("/MemberInformation/view/update.jsp");
 	}
 
 	/**
@@ -68,13 +66,17 @@ public class UpdateServlet extends HttpServlet {
 
 		//取得した値のnullチェック
 		Sky sky = new Sky();
+		//会員番号以外のnullチェック。
 		String c = sky.nullCheck(lastName, firstName, sex, year, month, day, job, phoneNumber, mailAddress);
+		//会員番号のnullチェック
 		String m = sky.nullCheckById(memberId);
-		if(!c.equals("")) {
-			session.setAttribute("updateMessage", c + Messages.W_CCM0001);
-			response.sendRedirect("/MemberInformation/view/update.jsp");
-		} else if(!m.equals("")) {
+		if(!m.equals("")) {
+			//会員番号にnullがあった場合エラーメッセージを返す
 			session.setAttribute("updateMessage", m + Messages.W_CCM0001);
+			response.sendRedirect("/MemberInformation/view/update.jsp");
+		} else if(!c.equals("")) {
+			//会員番号以外のnullがあった場合エラーメッセージを返す
+			session.setAttribute("updateMessage", c + Messages.W_CCM0001);
 			response.sendRedirect("/MemberInformation/view/update.jsp");
 		} else {
 			//Beanに入れやすいように加工
@@ -83,8 +85,9 @@ public class UpdateServlet extends HttpServlet {
 				//会員番号以外の要素をBeanに格納
 				MemberBean bean = check.put(lastName, firstName, sex, year, month, day, job, phoneNumber, mailAddress);
 				MemberDAO dao = new MemberDAO();
-
+				//更新
 				dao.update(bean, memberId);
+				//成功メッセージを返す
 				session.setAttribute("updateMessage", Messages.I_WKK0003);
 				//不要になったセッションオブジェクトをキル
 				session.removeAttribute("updateBean");
@@ -92,6 +95,7 @@ public class UpdateServlet extends HttpServlet {
 				response.sendRedirect("/MemberInformation/view/update.jsp");
 
 			} catch (Exception e) {
+				//更新失敗メッセージを返す
 				session.setAttribute("updateMessage", Messages.E_WKK0005);
 				response.sendRedirect("/MemberInformation/view/update.jsp");
 			}

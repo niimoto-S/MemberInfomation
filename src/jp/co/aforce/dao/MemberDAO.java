@@ -13,9 +13,11 @@ public class MemberDAO extends DAO {
 
 
 	//重複した値を持つ会員が存在しないかをチェック
+	//SQL-KK01-S01
 	public int search(MemberBean bean) throws Exception {
 
 		Connection con = getConnection();
+		//SQL文の作成
 		String sql = "select count(*) from "
 				+ MemberInfo.MEMBER_INFO
 				+ " where "
@@ -51,6 +53,7 @@ public class MemberDAO extends DAO {
 
 		ResultSet rs = st.executeQuery();
 
+		//データベースから返ってきた値を格納
 		int count = 0;
 		while(rs.next()) {
 			count = rs.getInt("count(*)");
@@ -62,10 +65,12 @@ public class MemberDAO extends DAO {
 	}
 
 	//新規会員登録
+	//SQL-KK01-I01
 	public void insert(MemberBean bean) throws SQLException, Exception {
 
 		Connection con = getConnection();
 
+		//SQL文の作成
 		String sql = "insert into member_info values(? ,?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		MemberId memberId = new MemberId();
 		String id = memberId.generateId();
@@ -82,6 +87,7 @@ public class MemberDAO extends DAO {
 		st.setString(9, bean.getPhoneNumber());
 		st.setString(10, bean.getMailAddress());
 
+		//登録処理
 		st.executeUpdate();
 
 		st.close();
@@ -90,6 +96,7 @@ public class MemberDAO extends DAO {
 	}
 
 	//会員番号で会員を検索
+	//SQL-KK01-R01
 	public MemberBean findByMemberId(String memberId) throws SQLException, Exception {
 
 		MemberBean bean = null;
@@ -115,6 +122,7 @@ public class MemberDAO extends DAO {
 		st.setString(1, memberId);
 		ResultSet rs = st.executeQuery();
 
+		//検索した結果をbeanに格納
 		while(rs.next()) {
 			bean = new MemberBean(
 					rs.getString(MemberInfo.LAST_NAME),
@@ -135,10 +143,12 @@ public class MemberDAO extends DAO {
 	}
 
 	//会員情報を更新
+	//SQL-KK01-U01
 	public void update(MemberBean bean, String memberId) throws SQLException, Exception {
 
 		Connection con = getConnection();
 
+		//SQL作成
 		String sql =
 				"update "
 				+ MemberInfo.MEMBER_INFO
@@ -168,6 +178,7 @@ public class MemberDAO extends DAO {
 		st.setString(9, bean.getMailAddress());
 		st.setString(10, memberId);
 
+		//更新処理
 		st.executeUpdate();
 
 		st.close();
@@ -175,9 +186,11 @@ public class MemberDAO extends DAO {
 	}
 
 	//会員情報を削除
+	//SQL-KK01-D01
 	public void delete(String memberId) throws Exception {
 		Connection con = getConnection();
 
+		//SQL文作成
 		String sql =
 				"delete"
 				+ " from "
@@ -188,6 +201,7 @@ public class MemberDAO extends DAO {
 		PreparedStatement st = con.prepareStatement(sql);
 		st.setString(1, memberId);
 
+		//削除処理
 		st.executeUpdate();
 
 		st.close();

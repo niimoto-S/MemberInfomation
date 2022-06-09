@@ -25,15 +25,13 @@ public class DeleteServlet extends HttpServlet {
      */
     public DeleteServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.sendRedirect("/MemberInformation/view/delete.jsp");
 	}
 
 	/**
@@ -45,24 +43,28 @@ public class DeleteServlet extends HttpServlet {
 
 		//会員番号
 		String memberId = request.getParameter("memberId");
-		//nullチェック
+
 		Sky sky = new Sky();
+		//会員番号のnullチェック
 		String m = sky.nullCheckById(memberId);
 
 		if(!m.equals("")) {
+			//nullだった場合の処理。エラーメッセージを返す
 			session.setAttribute("deleteMessage", m + Messages.W_CCM0001);
 			response.sendRedirect("/MemberInformation/view/delete.jsp");
 		} else {
-			//TODO データベースの行を削除する処理
 			try {
 				MemberDAO dao = new MemberDAO();
+				//会員番号を元にデータを削除
 				dao.delete(memberId);
+				//成功メッセージを返す
 				session.setAttribute("deleteMessage", Messages.I_WKK0002);
+				//不要なセッションオブジェクトを削除
 				session.removeAttribute("deleteMemberId");
 				session.removeAttribute("deleteBean");
 				response.sendRedirect("/MemberInformation/view/delete.jsp");
 			} catch (Exception e) {
-				// TODO: handle exception
+				//削除に失敗した場合の処理
 				session.setAttribute("deleteMessage", Messages.E_WKK0004);
 				response.sendRedirect("/MemberInformation/view/delete.jsp");
 			}

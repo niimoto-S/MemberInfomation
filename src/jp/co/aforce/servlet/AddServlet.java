@@ -27,7 +27,6 @@ public class AddServlet extends HttpServlet {
      */
     public AddServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -64,31 +63,39 @@ public class AddServlet extends HttpServlet {
 		String mailAddress = request.getParameter("mailAddress");
 
 		Sky sky = new Sky();
+		//空の文字列を姓の順番から見ていき、順番が若いほうから文字列を返す。また空が見つからなかった場合は""が返ってくる
 		String c = sky.nullCheck(lastName, firstName, sex, year, month, day, job, phoneNumber, mailAddress);
 		if(!c.equals("")) {
+			//文字列が入っていた場合は、エラーメッセージに空の要素を乗せて返す
 			session.setAttribute("message", c + Messages.W_CCM0001);
 			response.sendRedirect("/MemberInformation/view/add.jsp");
 		} else {
+			//文字列が入っていなかった場合の処理
 			Check check = new Check();
 
 			try {
+				//beanに入るようにそれぞれ型に変換し、beanに格納
 				MemberBean bean = check.put(lastName, firstName, sex, year, month, day, job, phoneNumber, mailAddress);
 				//daoのnew
 				MemberDAO dao = new MemberDAO();
 
-				//登録前チェック
+				//登録前チェック 1以上が返ってきた場合は同じデータがデータベースに入っていることを示す
 				int count = dao.search(bean);
 				if(count == 0) {
-					//登録
+					//同じデータが入っていなかった場合の処理
+					//登録処理
 					dao.insert(bean);
+					//登録完了メッセージを返す
 					session.setAttribute("message", Messages.I_WKK0001);
 					response.sendRedirect("/MemberInformation/view/add.jsp");
 				} else {
+					//重複メッセージを返す
 					session.setAttribute("message", Messages.E_WKK0001);
 					response.sendRedirect("/MemberInformation/view/add.jsp");
 				}
 
 			} catch (Exception e) {
+				//登録失敗のメッセージを返す
 				e.printStackTrace();
 				session.setAttribute("message", Messages.E_WKK0002);
 				response.sendRedirect("/MemberInformation/view/add.jsp");

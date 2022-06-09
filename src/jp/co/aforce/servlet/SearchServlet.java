@@ -25,15 +25,13 @@ public class SearchServlet extends HttpServlet {
      */
     public SearchServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.sendRedirect("/MemberInformation/view/update.jsp");
 	}
 
 	/**
@@ -42,6 +40,7 @@ public class SearchServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		try {
+			//会員番号
 			String memberId = request.getParameter("memberId");
 			if(memberId.equals("") || memberId.equals(null)) {
 				//会員番号がnullまたは空で渡された場合
@@ -53,17 +52,25 @@ public class SearchServlet extends HttpServlet {
 				MemberDAO dao = new MemberDAO();
 
 				try {
+					//検索情報をbeanに格納
 					bean = dao.findByMemberId(memberId);
+					//beanにデータが入ってなかった場合は、例外をスローする
+					if(bean == null) {
+						throw new Exception();
+					}
+					//会員番号に続くデータを渡す
 					session.setAttribute("memberId", memberId);
 					session.setAttribute("updateBean", bean);
 					response.sendRedirect("/MemberInformation/view/update.jsp");
 				} catch (Exception e) {
 					e.printStackTrace();
+					//検索結果が見つからなかった場合のエラーメッセージを返す
 					session.setAttribute("updateMessage", Messages.E_WKK0003);
 					response.sendRedirect("/MemberInformation/view/update.jsp");
 				}
 			}
 		} catch (Exception e) {
+			//会員番号が入力されてないかった場合エラーメッセージを返す
 			session.setAttribute("updateMessage", "会員番号" + Messages.W_CCM0001);
 			response.sendRedirect("/MemberInformation/view/update.jsp");
 		}

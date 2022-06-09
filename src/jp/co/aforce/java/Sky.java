@@ -50,6 +50,8 @@ public class Sky {
 
 	}
 
+	//会員情報のnullチェックメソッド
+	//空だった場合は文字列:会員番号を返す
 	public String nullCheckById(String memberId) {
 		if(memberId.equals("")) {
 			return "会員番号";
